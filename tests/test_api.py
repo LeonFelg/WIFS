@@ -22,3 +22,12 @@ def test_api_simulator():
         s = c.post("/api/alles-aus").json()["aktoren"]
         assert not s["pumpe"]["an"] and not s["licht"]["an"]
         assert c.post("/api/duenger", json={"ml": -1}).status_code == 422
+
+
+def test_oberflaeche_ausgeliefert():
+    with TestClient(create_app(simulate=True, sim_intervall=0.1)) as c:
+        r = c.get("/")
+        assert r.status_code == 200 and "schema" in r.text
+        # Sensornamen dürfen nicht fest im HTML stehen (kommen von /api/config)
+        assert all(n not in r.text for _, n, _ in h.SENSOR_ORDER)
+        assert c.get("/app.js").status_code == 200 and c.get("/style.css").status_code == 200

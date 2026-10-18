@@ -1,19 +1,17 @@
 # Übergabe
 ## Stand
-Phasen 0–2 fertig. Backend läuft: `python -m app.main [--simulate] [--port 8000]`, liefert auch static/ unter "/".
-- app/zustand.py: Klasse Anlage (Messwerte+Zeitstempel, zuletzt gesendeter Aktorzustand, Pumpen-Maximallaufzeit,
-  Wach-Schleife jede Sekunde, `automatik_tick()` = vorbereitete Stelle für Zeitpläne).
-- app/main.py: create_app(simulate). REST (JSON): GET /api/config, GET /api/status,
-  POST /api/pumpe {an, laufzeit_s?}, /api/duenger {ml}, /api/licht {an}, /api/lueftung {an, stufe?}, /api/alles-aus.
-  Antwort jeweils = Status-Snapshot; 503 wenn Arduino nicht verbunden (Zustand bleibt dann unverändert).
-  WebSocket /ws: sendet Snapshot sofort, bei jeder Messung und jede Sekunde.
-- Snapshot: verbunden, simulator, messzeit, alter_s, sensoren{key:wert}, aktoren{pumpe{an,rest_s}, duenger{letzte_ml,zeit},
-  licht{an}, lueftung{an,stufe}}. Config enthält Sensoren (key,name,einheit), Aktoren (key,name), Zeiten, platzhalter-Liste.
-- Pumpe ohne Laufzeit läuft höchstens PUMPE_MAX_LAUFZEIT_S, danach sendet der Pi PUMPE_AUS.
-- Header neu: AKTOREN (Schlüssel, Anzeigename). 14 Tests grün.
+Phasen 0–3 fertig. Backend (Phase 2) unverändert, siehe API unten. 15 Tests grün.
+- static/index.html: SVG-Schema (viewBox 400x540) mit klickbaren Objekten (data-open): Licht, Lüftung, Tank (-> Sensor wasserstand),
+  Dünger, Pumpe, Pflanzbereich (-> Sensor bodenfeuchte); Statusleiste; Sheet-Panel; "ALLES AUS"-Knopf (fest unten).
+- static/app.js: lädt /api/config, erzeugt Sensor-Plaketten dynamisch (Positionen in POS; unbekannte Sensoren landen automatisch
+  in einer Reihe unten), /ws mit Auto-Reconnect, Menüs (MENUES: pumpe, duenger, licht [nur Ein/Aus], lueftung; Sensoren zeigen Wert+Alter).
+  Befehle per POST /api/...; 503 -> Toast. Tank-Füllstand folgt Sensor "wasserstand".
+- static/style.css: Handy zuerst; Panel von unten, ab 760 px Breite als Karte rechts; Dunkelmodus per prefers-color-scheme.
+- Platzhalter in der UI: Chip "Zustand = zuletzt gesendet", orange Marke "Platzhalter" an Pumpen-Laufzeit, Dünger-Menge, Lüfterstufe.
+- Nicht im Browser getestet (keine Browser-Automatisierung laut Regeln): nur JS-Syntax (node --check), SVG-Wohlgeformtheit, Auslieferung per Test/curl.
 ## Nächster Schritt
-Phase 3: Oberfläche in static/ (SVG-Schema, Menüs/Bottom-Sheet, Live-Werte per /ws, Statusleiste, "Alles aus").
-Sensor-/Aktornamen aus /api/config holen, nichts fest einbauen außer SVG-Positionen. Platzhalter dezent kennzeichnen.
+Phase 4: PWA (manifest.json, Icons, Service Worker nur wo möglich – SW braucht https/localhost; im Heim-WLAN per http nicht
+registrierbar, dann nur Manifest + Meta-Tags) und Handy-Feinschliff (Touch-Ziele, Safe-Areas, Layout prüfen). Optische Prüfung am echten Gerät empfohlen.
 ## Offene Platzhalter
 - Port /dev/ttyUSB0, Baudrate 9600; alle Befehlstexte (P1/P0, L1/L0, V1/V0, P{s}, D{ml}, V{stufe}) sind Annahmen
 - Sensorauswahl (4 Sensoren); pH, EC fehlen

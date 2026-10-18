@@ -16,9 +16,9 @@
 - [x] Konfigurations-Endpunkt (Sensoren aus Header)
 - [x] Vorbereitete Stelle für Zeitpläne/Automatik
 ## Phase 3 – Oberfläche
-- [ ] SVG-Schema mit Live-Werten und Aktorfarben
-- [ ] Menüs (Handy: Panel von unten)
-- [ ] Statusleiste, "Alles aus"
+- [x] SVG-Schema mit Live-Werten und Aktorfarben
+- [x] Menüs (Handy: Panel von unten)
+- [x] Statusleiste, "Alles aus"
 ## Phase 4 – PWA
 - [ ] manifest.json, Icons, Service Worker (wo möglich)
 - [ ] Handy-Feinschliff

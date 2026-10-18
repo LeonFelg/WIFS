@@ -1,7 +1,95 @@
 <!doctype html>
 <html lang="de">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bewässerung</title><link rel="stylesheet" href="style.css"></head>
-<body><!-- TODO Phase 3: SVG-Schema, Menüs, Statusleiste, "Alles aus" -->
-<script src="app.js"></script></body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1b5e3f">
+<title>Bewässerung</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header id="status">
+  <span class="chip"><i id="dot"></i><span id="verb">Verbinde …</span></span>
+  <span class="chip" id="alter">Messwert: –</span>
+  <span class="chip sim" id="sim" hidden>Simulator aktiv</span>
+  <span class="chip hint" title="PLATZHALTER: keine Rückmeldung vom Arduino">Zustand = zuletzt gesendet</span>
+</header>
+
+<main>
+  <svg id="schema" viewBox="0 0 400 540" role="img" aria-label="Schema der Anlage">
+    <!-- Leitungen -->
+    <g class="pipe">
+      <path d="M110 235 H200 V278"/>
+      <path d="M330 215 V250 H200"/>
+      <path d="M200 322 V392"/>
+    </g>
+    <g class="drops" id="tropfen"><circle cx="200" cy="350" r="3"/><circle cx="200" cy="372" r="3"/></g>
+
+    <!-- Lampe -->
+    <g class="obj" id="o-licht" data-open="licht" tabindex="0" role="button" aria-label="Licht">
+      <polygon class="cone" points="170,56 230,56 300,392 100,392"/>
+      <line class="wire" x1="200" y1="0" x2="200" y2="30"/>
+      <path class="body" d="M165 56 L175 30 H225 L235 56 Z"/>
+      <text x="200" y="48" class="lbl" text-anchor="middle">Licht</text>
+    </g>
+
+    <!-- Lüfter -->
+    <g class="obj" id="o-lueftung" data-open="lueftung" tabindex="0" role="button" aria-label="Lüftung">
+      <rect class="body" x="305" y="40" width="80" height="80" rx="10"/>
+      <g class="blades"><path d="M345 80 q-6 -26 0 -32 q6 6 0 32z M345 80 q26 -6 32 0 q-6 6 -32 0z M345 80 q6 26 0 32 q-6 -6 0 -32z M345 80 q-26 6 -32 0 q6 -6 32 0z"/></g>
+      <circle class="hub" cx="345" cy="80" r="4"/>
+      <text x="345" y="135" class="lbl" text-anchor="middle">Lüftung</text>
+    </g>
+
+    <!-- Tank -->
+    <g class="obj" id="o-tank" data-open="sensor:wasserstand" tabindex="0" role="button" aria-label="Wassertank">
+      <rect class="body" x="20" y="150" width="90" height="110" rx="8"/>
+      <clipPath id="tankclip"><rect x="20" y="150" width="90" height="110" rx="8"/></clipPath>
+      <rect id="tankfill" class="water" x="20" y="205" width="90" height="55" clip-path="url(#tankclip)"/>
+      <text x="65" y="143" class="lbl" text-anchor="middle">Wassertank</text>
+    </g>
+
+    <!-- Düngerbehälter + Dosierpumpe -->
+    <g class="obj" id="o-duenger" data-open="duenger" tabindex="0" role="button" aria-label="Düngerdosierung">
+      <rect class="body" x="290" y="150" width="80" height="65" rx="8"/>
+      <rect class="fert" x="290" y="175" width="80" height="40" rx="6"/>
+      <text x="330" y="143" class="lbl" text-anchor="middle">Dünger</text>
+      <text id="duenger-txt" x="330" y="236" class="sub" text-anchor="middle"></text>
+    </g>
+
+    <!-- Pumpe -->
+    <g class="obj" id="o-pumpe" data-open="pumpe" tabindex="0" role="button" aria-label="Pumpe">
+      <circle class="body" cx="200" cy="300" r="24"/>
+      <path class="imp" d="M188 300 a12 12 0 1 1 12 12 M200 288 v24"/>
+      <text x="236" y="305" class="lbl">Pumpe</text>
+      <text id="pumpe-txt" x="236" y="320" class="sub"></text>
+    </g>
+
+    <!-- Pflanzbereich -->
+    <g class="obj" id="o-pflanze" data-open="sensor:bodenfeuchte" tabindex="0" role="button" aria-label="Pflanzbereich">
+      <rect class="soil" x="60" y="392" width="280" height="78" rx="8"/>
+      <g class="plant"><path d="M110 392 v-34 M110 372 q-16 -6 -18 -20 q16 0 18 20 M110 364 q16 -6 18 -20 q-16 0 -18 20"/>
+        <path d="M200 392 v-40 M200 376 q-16 -6 -18 -20 q16 0 18 20 M200 366 q16 -6 18 -20 q-16 0 -18 20"/>
+        <path d="M290 392 v-30 M290 378 q-16 -6 -18 -20 q16 0 18 20 M290 370 q16 -6 18 -20 q-16 0 -18 20"/></g>
+      <text x="200" y="455" class="lbl soiltxt" text-anchor="middle">Pflanzbereich</text>
+    </g>
+
+    <!-- Sensoren (aus /api/config erzeugt) -->
+    <g id="sensoren"></g>
+  </svg>
+</main>
+
+<div id="scrim" hidden></div>
+<aside id="sheet" aria-hidden="true">
+  <div class="grip"></div>
+  <header><h2 id="sheet-titel"></h2><button id="sheet-zu" aria-label="Schließen">✕</button></header>
+  <div id="sheet-inhalt"></div>
+</aside>
+
+<footer>
+  <button id="alles-aus">ALLES AUS</button>
+</footer>
+<div id="toast" role="status" hidden></div>
+<script src="app.js"></script>
+</body>
 </html>
