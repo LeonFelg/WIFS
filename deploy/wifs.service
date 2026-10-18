@@ -1,0 +1,18 @@
+# systemd-Dienst für WIFS. Installation: siehe INSTALL.md.
+# Benutzer und Pfade bei Bedarf anpassen (hier: Benutzer "pi", Repository in /home/pi/WIFS).
+[Unit]
+Description=WIFS Bewässerung (Weboberfläche)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=pi
+Group=pi
+SupplementaryGroups=dialout
+WorkingDirectory=/home/pi/WIFS
+ExecStart=/home/pi/WIFS/.venv/bin/python -m app.main --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

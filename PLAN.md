@@ -23,6 +23,6 @@
 - [x] manifest.json, Icons, Service Worker (wo möglich)
 - [x] Handy-Feinschliff
 ## Phase 5 – Abschluss
-- [ ] Tests abrunden
-- [ ] INSTALL.md (Raspberry Pi, systemd)
-- [ ] README, finale HANDOFF.md
+- [x] Tests abrunden
+- [x] INSTALL.md (Raspberry Pi, systemd)
+- [x] README, finale HANDOFF.md
