@@ -20,8 +20,8 @@
 - [x] Menüs (Handy: Panel von unten)
 - [x] Statusleiste, "Alles aus"
 ## Phase 4 – PWA
-- [ ] manifest.json, Icons, Service Worker (wo möglich)
-- [ ] Handy-Feinschliff
+- [x] manifest.json, Icons, Service Worker (wo möglich)
+- [x] Handy-Feinschliff
 ## Phase 5 – Abschluss
 - [ ] Tests abrunden
 - [ ] INSTALL.md (Raspberry Pi, systemd)

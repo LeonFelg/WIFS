@@ -35,7 +35,8 @@ function baueSensoren() {
     let p = POS[s.key];
     if (!p) { p = [10 + (extra % 3) * 130, 500 + Math.floor(extra / 3) * 40]; extra++; }
     const a = el("g", { class: "sensor", id: "s-" + s.key, tabindex: 0, role: "button", "data-open": "sensor:" + s.key, transform: `translate(${p[0]} ${p[1]})` });
-    a.append(el("rect", { class: "badge", width: 110, height: 34, rx: 8 }),
+    a.append(el("rect", { class: "hit", x: -6, y: -6, width: 122, height: 46 }), // größere Tippfläche
+      el("rect", { class: "badge", width: 110, height: 34, rx: 8 }),
       el("text", { class: "n", x: 8, y: 13 }, s.name),
       el("text", { class: "v", x: 8, y: 29, id: "v-" + s.key }, "–"),
       el("text", { class: "n", x: 102, y: 29, "text-anchor": "end" }, s.einheit));
@@ -157,15 +158,23 @@ function schliesse() {
 }
 
 // ---- Start ----
+let ws = null, versuche = 0, letzteNachricht = 0;
+function banner(an) { $("banner").hidden = !an; }
 function verbinde() {
-  const ws = new WebSocket((location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/ws");
-  ws.onmessage = (e) => zeige(JSON.parse(e.data));
+  if (ws && ws.readyState <= 1) return; // läuft schon
+  ws = new WebSocket((location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/ws");
+  ws.onopen = () => { versuche = 0; };
+  ws.onmessage = (e) => { letzteNachricht = Date.now(); banner(false); zeige(JSON.parse(e.data)); };
   ws.onclose = () => {
-    $("dot").className = "bad"; $("verb").textContent = "Server getrennt";
+    banner(true); $("dot").className = "bad"; $("verb").textContent = "Pi nicht erreichbar";
     document.body.classList.add("offline");
-    setTimeout(verbinde, 2000);
+    setTimeout(verbinde, Math.min(1000 * ++versuche, 5000)); // 1 s, 2 s, … höchstens 5 s
   };
 }
+// Der Server sendet jede Sekunde; bleibt es still (z. B. WLAN weg ohne Close), neu verbinden.
+setInterval(() => { if (ws && ws.readyState === 1 && Date.now() - letzteNachricht > 5000) ws.close(); }, 2000);
+// Handy aus dem Standby / WLAN wieder da: sofort neu verbinden
+for (const ev of ["online", "visibilitychange", "pageshow"]) window.addEventListener(ev, () => { if (!document.hidden) verbinde(); });
 async function start() {
   try { cfg = await (await fetch("/api/config")).json(); }
   catch { $("verb").textContent = "Server nicht erreichbar"; return setTimeout(start, 2000); }
@@ -178,5 +187,8 @@ async function start() {
   $("sheet-zu").onclick = $("scrim").onclick = schliesse;
   $("alles-aus").onclick = () => post("alles-aus");
   verbinde();
+  // Service Worker nur über HTTPS/localhost möglich; über http://<pi-adresse> läuft die App ohne ihn.
+  // PLATZHALTER: HTTPS fehlt im Prototyp (siehe HANDOFF.md).
+  if ("serviceWorker" in navigator && window.isSecureContext) navigator.serviceWorker.register("/sw.js").catch(() => {});
 }
 start();

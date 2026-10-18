@@ -4,10 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1b5e3f">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Bewässerung">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
 <title>Bewässerung</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div id="banner" role="alert" hidden>Verbindung zum Pi unterbrochen – verbinde neu …</div>
 <header id="status">
   <span class="chip"><i id="dot"></i><span id="verb">Verbinde …</span></span>
   <span class="chip" id="alter">Messwert: –</span>

@@ -31,3 +31,16 @@ def test_oberflaeche_ausgeliefert():
         # Sensornamen dürfen nicht fest im HTML stehen (kommen von /api/config)
         assert all(n not in r.text for _, n, _ in h.SENSOR_ORDER)
         assert c.get("/app.js").status_code == 200 and c.get("/style.css").status_code == 200
+
+
+def test_pwa_dateien():
+    import json
+    with TestClient(create_app(simulate=True, sim_intervall=0.1)) as c:
+        m = c.get("/manifest.json").json()
+        assert m["display"] == "fullscreen" and m["start_url"] == "/"
+        for i in m["icons"]:
+            assert c.get(i["src"]).headers["content-type"] == "image/png"
+        assert c.get("/icons/apple-touch-icon.png").status_code == 200
+        assert c.get("/sw.js").status_code == 200
+        html = c.get("/").text
+        assert "apple-mobile-web-app-capable" in html and "apple-touch-icon" in html and 'rel="manifest"' in html
