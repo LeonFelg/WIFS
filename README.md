@@ -5,7 +5,7 @@ Befehle und Sensorreihenfolge: nur in `protocol_header.py`.
 ## Start im Simulator
     pip install -r requirements.txt
     python -m app.main --simulate
-(ab Phase 2 lauffähig; dann erreichbar unter http://localhost:8000)
+Erreichbar unter http://localhost:8000 (API: /api/status, /api/config; WebSocket: /ws).
 
 ## Tests
     pytest

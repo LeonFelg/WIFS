@@ -10,11 +10,11 @@
 - [x] simulator.py (Fake-Arduino)
 - [x] Tests Parser/Befehle
 ## Phase 2 – Backend
-- [ ] Zustandsspeicher (zuletzt gesendeter Zustand)
-- [ ] REST-Endpunkte (Aktoren, "Alles aus")
-- [ ] WebSocket mit Live-Werten
-- [ ] Konfigurations-Endpunkt (Sensoren aus Header)
-- [ ] Vorbereitete Stelle für Zeitpläne/Automatik
+- [x] Zustandsspeicher (zuletzt gesendeter Zustand)
+- [x] REST-Endpunkte (Aktoren, "Alles aus")
+- [x] WebSocket mit Live-Werten
+- [x] Konfigurations-Endpunkt (Sensoren aus Header)
+- [x] Vorbereitete Stelle für Zeitpläne/Automatik
 ## Phase 3 – Oberfläche
 - [ ] SVG-Schema mit Live-Werten und Aktorfarben
 - [ ] Menüs (Handy: Panel von unten)
