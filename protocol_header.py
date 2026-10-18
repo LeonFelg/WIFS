@@ -42,6 +42,15 @@ SENSOR_ORDER = [
     ("wasserstand",    "Wasserstand",    "%"),
 ]
 
+# Aktoren, die die Oberfläche anzeigt: (Schlüssel, Anzeigename). Reine Anzeige –
+# die Befehle dazu stehen in Abschnitt 3.
+AKTOREN = [
+    ("pumpe",    "Pumpe"),
+    ("duenger",  "Düngerdosierung"),
+    ("licht",    "Licht"),
+    ("lueftung", "Lüftung"),
+]
+
 # ---------------------------------------------------------------------------
 # 3. Befehle Pi -> Arduino (eine Zeile pro Befehl, Zeilenende wird automatisch angehängt)
 # ---------------------------------------------------------------------------
