@@ -5,10 +5,10 @@
 - [x] CLAUDE.md, PLAN.md, HANDOFF.md, README.md
 - [x] Header-Test
 ## Phase 1 – Serial, Parser, Simulator
-- [ ] serial_link.py (lesen, senden, Wiederverbindung)
-- [ ] protocol.py (Parser, Befehle, Pumpen-Maximallaufzeit)
-- [ ] simulator.py (Fake-Arduino)
-- [ ] Tests Parser/Befehle
+- [x] serial_link.py (lesen, senden, Wiederverbindung)
+- [x] protocol.py (Parser, Befehle, Pumpen-Maximallaufzeit)
+- [x] simulator.py (Fake-Arduino)
+- [x] Tests Parser/Befehle
 ## Phase 2 – Backend
 - [ ] Zustandsspeicher (zuletzt gesendeter Zustand)
 - [ ] REST-Endpunkte (Aktoren, "Alles aus")
